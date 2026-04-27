@@ -1,0 +1,123 @@
+import random
+
+
+def get_user_guess():
+    """Получает и валидирует ввод пользователя."""
+    while True:
+        try:
+            user_input = input("Введите ваше предположение (1–100): ").strip()
+
+            # Проверка на пустой ввод
+            if not user_input:
+                print("Ошибка: ввод не может быть пустым. Попробуйте ещё раз.")
+                continue
+
+            guess = int(user_input)
+
+            # Проверка диапазона
+            if guess < 1 or guess > 100:
+                print("Ошибка: число должно быть в диапазоне от 1 до 100. Попробуйте ещё раз.")
+                continue
+
+            return guess
+
+        except ValueError:
+            print("Ошибка: пожалуйста, введите целое число от 1 до 100.")
+
+
+
+def display_hint(guess, secret_number):
+    """Выводит подсказку после неверного предположения."""
+    difference = abs(guess - secret_number)
+
+    if guess < secret_number:
+        if difference <= 5:
+            print("Очень близко! Но всё равно слишком маленькое. Попробуйте ещё.")
+        else:
+            print("Слишком маленькое! Попробуйте большее число.")
+    else:  # guess > secret_number
+        if difference <= 5:
+            print("Очень близко! Но всё равно слишком большое. Попробуйте ещё.")
+        else:
+            print("Слишком большое! Попробуйте меньшее число.")
+
+
+
+def play_game():
+    """Основная функция игры."""
+    secret_number = random.randint(1, 100)
+    attempts = 0
+    guessed_numbers = []
+
+    print("=" * 50)
+    print("🎮 ДОБРО ПОЖАЛОВАТЬ В ИГРУ «УГАДАЙ ЧИСЛО» 🎮")
+    print("=" * 50)
+    print("Я загадал число от 1 до 100. Попробуйте угадать!")
+    print("После каждой попытки я дам вам подсказку.\n")
+
+    while True:
+        # Получаем предположение пользователя
+        guess = get_user_guess()
+        attempts += 1
+        guessed_numbers.append(guess)
+
+        # Проверяем предположение
+        if guess == secret_number:
+            break
+
+        # Выводим подсказку
+        display_hint(guess, secret_number)
+        print(f"Попыток сделано: {attempts}\n")
+
+    # Вывод итоговой статистики
+    print("\n" + "=" * 50)
+    print("🎉 ПОЗДРАВЛЯЮ! ВЫ УГАДАЛИ ЧИСЛО! 🎉")
+    print("=" * 50)
+    print(f"Загаданное число: {secret_number}")
+    print(f"Количество попыток: {attempts}")
+
+    # Анализ результатов
+    if attempts == 1:
+        print("Невероятная удача! Вы угадали с первого раза!")
+    elif attempts <= 5:
+        print("Отличный результат! У вас отличная интуиция!")
+    elif attempts <= 10:
+        print("Хороший результат! Вы почти угадали сразу.")
+    else:
+        print("Неплохо, но в следующий раз получится быстрее!")
+
+    # Выводим историю попыток с нумерацией
+    print("\nИстория ваших попыток:")
+    for i, num in enumerate(guessed_numbers, 1):
+        status = "✓ УГАДАНО!" if num == secret_number else ""
+        print(f"{i:2d}. {num:3d} {status}")
+
+    # Дополнительная статистика
+    print(f"\nУникальных чисел введено: {len(set(guessed_numbers))}")
+    print(f"Максимальное число: {max(guessed_numbers)}")
+    print(f"Минимальное число: {min(guessed_numbers)}")
+
+
+
+def main():
+    """Главная функция с возможностью повторной игры."""
+    while True:
+        play_game()
+
+        # Спрашиваем, хочет ли пользователь сыграть ещё раз
+        while True:
+            play_again = input("\nХотите сыграть ещё раз? (да/нет): ").strip().lower()
+            if play_again in ('да', 'д', 'yes', 'y'):
+                print("\nОтлично! Начинаем новую игру...\n")
+                break
+            elif play_again in ('нет', 'н', 'no', 'n'):
+                print("Спасибо за игру! До новых встреч! 👋")
+                return
+            else:
+                print("Пожалуйста, ответьте 'да' или 'нет'.")
+
+
+
+# Запуск игры
+if __name__ == "__main__":
+    main()
